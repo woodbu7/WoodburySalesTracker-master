@@ -13,6 +13,7 @@ namespace TheSalesTracker
     {
         None,
         SetupAccount,
+        UpdateAccount,
         Travel,
         Buy,
         Sell,

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace TheSalesTracker
 {
@@ -16,13 +18,15 @@ namespace TheSalesTracker
                 FirstName = "Madeleine",
                 LastName = "Woodbury",
                 AccountID = "123",
-                //CurrentStock = new Product(Product.ProductType.Benchpress, 25, false),
-                //CitiesVisited = new List<City>()
-                //{
-                //    new City("Oslo", 25, 10),
-                //    new City("Bergen", 50, 30),
-                //}
-                
+                CurrentStock = new List<Product>()
+                {
+                    new Product(Product.ProductType.Bike, 100, false)
+                },
+                CitiesVisited = new List<City>()
+                {
+                    new City("Oslo")
+     
+                }
             };
             
          

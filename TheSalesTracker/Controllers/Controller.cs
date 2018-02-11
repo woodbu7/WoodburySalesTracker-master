@@ -91,6 +91,12 @@ namespace TheSalesTracker
                         city = SetupAccount();
                         accountExist = true;
                         break;
+                    case MenuOption.UpdateAccount:
+                        if (accountExist)
+                            UpdateAccount();
+                        else
+                            Error();
+                        break;
                     case MenuOption.Travel:
                         if (accountExist)
                             city = Travel();
@@ -153,11 +159,17 @@ namespace TheSalesTracker
             Environment.Exit(1);
         }
 
+        /// <summary>
+        /// Calls method that displays to the user that account is missing
+        /// </summary>
         public void Error()
         {
             _consoleView.DisplayMissingAccountError();
         }
 
+        /// <summary>
+        /// displays menu for buying new or existing products
+        /// </summary>
         public void PurchaseMenu()
         {
             int userChoice = _consoleView.DisplayPurchaseMenu();
@@ -187,11 +199,19 @@ namespace TheSalesTracker
             // instantiate new city object
             City _city = new City();
             _city.CityName = _consoleView.DisplayGetNextCity();
+
+            // instantiate a new list of products
+            _city.SalesInfo = new List<Product>();
+
+            foreach (Product product in _salesperson.CurrentStock)
+            {
+                // add products in inventory to city salesInfo list
+                _city.SalesInfo.Add(new Product(product.Type, 0, 0));
+
+            }
             
             //
             // do not add empty strings to list for city names
-            //
-
             if (_city.CityName != "")
             {
                 _salesperson.CitiesVisited.Add(_city);
@@ -216,46 +236,58 @@ namespace TheSalesTracker
             _consoleView.DisplayAccountInfo(_salesperson);
         }
 
+        /// <summary>
+        /// buy new products
+        /// </summary>
         public void BuyNewProducts()
         {
             // instantiate a new product
             Product _product = new Product();
             _product.Type = _consoleView.DisplayBuyNewProducts(_salesperson);
-
+            
             if (_product.Type != Product.ProductType.None)
             {
+                // get the number of units to buy and adds them to the product
                 int numberOfUnits = _consoleView.GetNumberOfUnitsToBuy();
                 _product.AddProducts(numberOfUnits);
                 _product.OnBackorder = false;
 
+                // add products to the current stock list
                 _salesperson.CurrentStock.Add(_product);
 
                 // update city object
                 city.SalesInfo.Add(new Product(_product.Type, numberOfUnits, 0));
             }
-
-            
      
         }
 
         /// <summary>
-        /// buy products
+        /// buy more of existing products
         /// </summary>
         private void Buy()
         {
+            // get the product type the user wants to buy more of
             Product.ProductType productType = _consoleView.DisplayBuyExistingProducut(_salesperson);
             int numberOfUnits = 0;
 
+            // foreach loop to find the existing product
             foreach (Product item in _salesperson.CurrentStock)
             {
+                // if product type is found it prompts the user for number of products
+                // and adds them to the product
                 if (item.Type == productType && productType != Product.ProductType.None)
                 {
                     numberOfUnits = _consoleView.GetNumberOfUnitsToBuy();
                     item.AddProducts(numberOfUnits);
 
+                    // find the product in the salesInfo list and update the number of units bought
                     foreach (Product product in city.SalesInfo)
                     {
-                        product.BuyProducts(numberOfUnits);
+                        if (productType == product.Type)
+                        {
+                            product.BuyProducts(numberOfUnits);
+                        }
+                            
                     }
 
                 }
@@ -264,34 +296,48 @@ namespace TheSalesTracker
 
         }
 
-        
         /// <summary>
         /// sell product
         /// </summary>
         private void Sell()
         {
+            // get the product type the user wants to sell
             Product.ProductType productType = _consoleView.DisplaySellProducts(_salesperson);
             int numberOfUnits = 0;
 
+            // foreach loop to find the existing product
             foreach (Product item in _salesperson.CurrentStock)
             {
+                // if product type is found it prompts the user for number of products
+                // and subtracts them from the product
                 if (item.Type == productType && productType != Product.ProductType.None)
                 {
                     numberOfUnits = _consoleView.GetNumberOfUnitsToSell();
                     item.SubtractProducts(numberOfUnits);
 
+                    // if more products are sold than exist in inventory
+                    // backorder notification is displayed to the user
                     if (item.OnBackorder)
                     {
                         _consoleView.DisplayBackorderNotification(item, numberOfUnits);
+                    }
+
+                    // find the product in the salesIndo list and update the number of units sold
+                    foreach (Product product in city.SalesInfo)
+                    {
+                        if (productType == product.Type)
+                        {
+                            product.SellProducts(numberOfUnits);
+                        }
+
                     }
                 }
             }
 
         }
-        
-    
+
         /// <summary>
-        /// display inventory
+        /// calls display inventory
         /// </summary>
         private void DisplayInventory()
         {
@@ -305,8 +351,16 @@ namespace TheSalesTracker
         {
             _salesperson = _consoleView.DisplaySetupAccount(out City city);
 
+            // method returns a new city object
             return city;
+        }
 
+        /// <summary>
+        ///  lets the user update account info
+        /// </summary>
+        private void UpdateAccount()
+        {
+            _salesperson = _consoleView.DisplayUpdateAccount(_salesperson);
         }
 
         /// <summary>

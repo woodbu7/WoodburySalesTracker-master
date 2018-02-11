@@ -114,9 +114,22 @@ namespace TheSalesTracker
             _numberOfUnits -= unitsToSubtract;
         }
 
+        /// <summary>
+        /// when the user buys products the number of products increments the productsBought property
+        /// </summary>
+        /// <param name="unitsToAdd"></param>
         public void BuyProducts(int unitsToAdd)
         {
             _productsBought += unitsToAdd;
+        }
+
+        /// <summary>
+        /// when the user sells products the number of products decrements the productsSold property
+        /// </summary>
+        /// <param name="unitsToSubtract"></param>
+        public void SellProducts(int unitsToSubtract)
+        {
+            _productsSold -= unitsToSubtract;
         }
 
         #endregion

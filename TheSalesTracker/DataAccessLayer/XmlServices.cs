@@ -27,29 +27,38 @@ namespace TheSalesTracker
 
         #region Methods
 
+        /// <summary>
+        /// Read Salesperson Account from a the datafile
+        /// </summary>
+        /// <returns></returns>
         public Salesperson ReadSalespersonFromDataFile()
         {
-            Salesperson salesperson = new Salesperson();
+            // instantiate a new Salesperson object
+            //Salesperson salesperson = new Salesperson();
+            Salesperson salesperson;
 
-            StreamReader sReader = new StreamReader(_dataFilePath);
+            StreamReader sReader = new StreamReader(_dataFilePath); //Data File = Data.xml
 
             XmlSerializer deserializer = new XmlSerializer(typeof(Salesperson));
-
+      
             using (sReader)
             {
                 object xmlObject = deserializer.Deserialize(sReader);
-                Console.WriteLine(xmlObject);
-                salesperson = (Salesperson)xmlObject;
+                salesperson = xmlObject as Salesperson;
             }
 
             return salesperson;
         }
 
+        /// <summary>
+        /// Write Salesperson account to Data File
+        /// </summary>
+        /// <param name="salesperson"></param>
         public void WriteSalespersonToDataFile(Salesperson salesperson)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(Salesperson), new XmlRootAttribute("Salesperson"));
+            XmlSerializer serializer = new XmlSerializer(typeof(Salesperson));
 
-            StreamWriter sWriter = new StreamWriter(_dataFilePath);
+            StreamWriter sWriter = new StreamWriter(_dataFilePath); //Data File = Data.xml
 
             using (sWriter)
             {
