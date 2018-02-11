@@ -17,7 +17,6 @@ namespace TheSalesTracker
         private string _lastName;
         private string _accountID;
         private List<City> _citiesVisited;
-        //private Product _currentStock;
         private List<Product> _currentStock;
 
         #endregion
@@ -47,12 +46,6 @@ namespace TheSalesTracker
             get { return _citiesVisited; }
             set { _citiesVisited = value; }
         }
-
-        //public Product CurrentStock
-        //{
-        //    get { return _currentStock; }
-        //    set { _currentStock = value; }
-        //}
 
         public List<Product> CurrentStock
         {

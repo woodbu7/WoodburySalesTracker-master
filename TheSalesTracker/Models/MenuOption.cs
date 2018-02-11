@@ -14,7 +14,6 @@ namespace TheSalesTracker
         None,
         SetupAccount,
         Travel,
-        AddNewProducts,
         Buy,
         Sell,
         DisplayInventory,

@@ -11,9 +11,7 @@ namespace TheSalesTracker
         #region Fields
 
         private string _cityName;
-        private List<Product.ProductType> _productSold;
-        private int _numberOfProductsSold;
-        private int _numberOfProductsBought;
+        private List<Product> _salesInfo;
 
         #endregion
 
@@ -25,16 +23,10 @@ namespace TheSalesTracker
             set { _cityName = value; }
         }
 
-        public int NumberOfProductsSold
+        public List<Product> SalesInfo
         {
-            get { return _numberOfProductsSold; }
-            set { _numberOfProductsSold = value; }
-        }
-
-        public int NumberOfProductsBought
-        {
-            get { return _numberOfProductsBought; }
-            set { _numberOfProductsBought = value; }
+            get { return _salesInfo; }
+            set { _salesInfo = value; }
         }
 
         #endregion
@@ -45,13 +37,11 @@ namespace TheSalesTracker
         {
 
         }
-        public City(string cityName, int numberOfProductsSold, int numberOfProductsBought)
+
+        public City(string cityName)
         {
             _cityName = cityName;
-           // _productsSold = new Product.ProductType();
-           // _productsBought = new Product.ProductType();
-            _numberOfProductsSold = numberOfProductsSold;
-            _numberOfProductsBought = numberOfProductsBought;
+            _salesInfo = new List<Product>();
         }
 
         #endregion

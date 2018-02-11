@@ -17,7 +17,6 @@ namespace TheSalesTracker
         private Salesperson _salesperson;
         private bool _usingApplication;
         private City city;
-        private Product _product;
 
         #endregion
 
@@ -66,6 +65,7 @@ namespace TheSalesTracker
         private void ManageApplicationLoop()
         {
             MenuOption userMenuChoice;
+            bool accountExist = false;
 
             _consoleView.DisplayWelcomeScreen();
 
@@ -89,33 +89,53 @@ namespace TheSalesTracker
                         break;
                     case MenuOption.SetupAccount:
                         city = SetupAccount();
+                        accountExist = true;
                         break;
                     case MenuOption.Travel:
-                        city = Travel();
+                        if (accountExist)
+                            city = Travel();
+                        else
+                            Error();
                         break;
                     case MenuOption.Buy:
-                        PurchaseMenu();
+                        if (accountExist)
+                            PurchaseMenu();
+                        else
+                            Error();
                         break;
                     case MenuOption.Sell:
-                        Sell();
-                        break;
-                    case MenuOption.AddNewProducts:
-                        BuyNewProducts();
+                        if (accountExist)
+                            Sell();
+                        else
+                            Error();
                         break;
                     case MenuOption.DisplayInventory:
-                        DisplayInventory();
+                        if (accountExist)
+                            DisplayInventory();
+                        else
+                            Error();
                         break;
                     case MenuOption.DisplayCities:
-                        DisplayCities();
+                        if (accountExist)
+                            DisplayCities();
+                        else
+                            Error();
                         break;
                     case MenuOption.DisplayAccountInfo:
-                        DisplayAccountInfo();
+                        if (accountExist)
+                            DisplayAccountInfo();
+                        else
+                            Error();
                         break;
                     case MenuOption.SaveAccountInfo:
-                        DisplaySaveAccountInfo();
+                        if (accountExist)
+                            DisplaySaveAccountInfo();
+                        else
+                            Error();
                         break;
                     case MenuOption.LoadAccountInfo:
                         DisplayLoadAcoountInfo();
+                        accountExist = true;
                         break;
                     case MenuOption.Exit:
                         _usingApplication = false;
@@ -131,6 +151,11 @@ namespace TheSalesTracker
             // close the application
             //
             Environment.Exit(1);
+        }
+
+        public void Error()
+        {
+            _consoleView.DisplayMissingAccountError();
         }
 
         public void PurchaseMenu()
@@ -162,12 +187,11 @@ namespace TheSalesTracker
             // instantiate new city object
             City _city = new City();
             _city.CityName = _consoleView.DisplayGetNextCity();
-            _city.NumberOfProductsBought = 0; // default value
-            _city.NumberOfProductsSold = 0; // default value
             
             //
             // do not add empty strings to list for city names
             //
+
             if (_city.CityName != "")
             {
                 _salesperson.CitiesVisited.Add(_city);
@@ -205,7 +229,12 @@ namespace TheSalesTracker
                 _product.OnBackorder = false;
 
                 _salesperson.CurrentStock.Add(_product);
+
+                // update city object
+                city.SalesInfo.Add(new Product(_product.Type, numberOfUnits, 0));
             }
+
+            
      
         }
 
@@ -223,12 +252,16 @@ namespace TheSalesTracker
                 {
                     numberOfUnits = _consoleView.GetNumberOfUnitsToBuy();
                     item.AddProducts(numberOfUnits);
+
+                    foreach (Product product in city.SalesInfo)
+                    {
+                        product.BuyProducts(numberOfUnits);
+                    }
+
                 }
+
             }
 
-            // add number of units bought
-            //city.NumberOfProductsBought = city.NumberOfProductsBought + numberOfUnits;
-            //city.NumberOfProductsBought = city.NumberOfProductsBought + numberOfUnits;
         }
 
         
@@ -254,17 +287,6 @@ namespace TheSalesTracker
                 }
             }
 
-            //int numberOfUnits = _consoleView.DisplayGetNumberOfUnitsToSell(_salesperson.CurrentStock);
-            //_salesperson.CurrentStock.SubtractProducts(numberOfUnits);
-
-            // if number of units to sell is less than current stock, run backorder notifaction
-            //if (_salesperson.CurrentStock.OnBackorder)
-            //{
-            //    _consoleView.DisplayBackorderNotification(_salesperson.CurrentStock, numberOfUnits);
-            //}
-
-            //_city.NumberOfProductsSold = _city.NumberOfProductsSold - numberOfUnits;
-            //city.NumberOfProductsSold = city.NumberOfProductsSold - numberOfUnits;
         }
         
     
@@ -276,15 +298,11 @@ namespace TheSalesTracker
             _consoleView.DisplayInventory(_salesperson);
         }
 
-    
-        
-
         /// <summary>
         /// setup new user account
         /// </summary>
         private City SetupAccount()
         {
-
             _salesperson = _consoleView.DisplaySetupAccount(out City city);
 
             return city;

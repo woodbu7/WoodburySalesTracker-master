@@ -104,14 +104,23 @@ namespace TheSalesTracker
             ConsoleUtil.DisplayMessage("You have traveled to the following cities:");
             ConsoleUtil.DisplayMessage("");
 
-
-            foreach (City c in salesperson.CitiesVisited)
+            
+            foreach (City city in salesperson.CitiesVisited)
             {
-                ConsoleUtil.DisplayMessage("City: " + c.CityName);
-                ConsoleUtil.DisplayMessage("Number of units sold: " + c.NumberOfProductsSold.ToString());
-                ConsoleUtil.DisplayMessage("Number of units bought: " + c.NumberOfProductsBought.ToString());
+                ConsoleUtil.DisplayMessage("City: " + city.CityName);
+
+                ConsoleUtil.DisplayMessage("Sales Info: ");
+                foreach (Product product in city.SalesInfo)
+                {
+                    ConsoleUtil.DisplayMessage("");
+                    ConsoleUtil.DisplayMessage("Product Type: " + product.Type.ToString());
+                    ConsoleUtil.DisplayMessage("Units Bought: " + product.ProductsBought.ToString());
+                    ConsoleUtil.DisplayMessage("Units Sold: " + product.ProductsSold.ToString());
+                    ConsoleUtil.DisplayMessage("");
+                }
                 ConsoleUtil.DisplayMessage("");
             }
+            
 
             DisplayContinuePrompt();
         }
@@ -757,6 +766,8 @@ namespace TheSalesTracker
         public Salesperson DisplaySetupAccount(out City city)
         {
             Salesperson salesperson = new Salesperson();
+            city = new City();
+            city.SalesInfo = new List<Product>();
 
             ConsoleUtil.HeaderText = "Account Setup";
             ConsoleUtil.DisplayReset();
@@ -777,12 +788,7 @@ namespace TheSalesTracker
             ConsoleUtil.DisplayMessage("");
 
             ConsoleUtil.DisplayPromptMessage("Enter your starting city: ");
-            city = new City();
             city.CityName = Console.ReadLine();
-            city.NumberOfProductsSold = 0;
-           
-            // add city object to salesperson
-            salesperson.CitiesVisited.Add(city);
 
             DisplayAvailableProducts();
 
@@ -790,10 +796,17 @@ namespace TheSalesTracker
             ConsoleUtil.DisplayMessage("");
             ConsoleUtil.DisplayPromptMessage("Enter the product you wish to buy: ");
             salesperson.CurrentStock = DisplayGetProducts(salesperson);
-           
+
+
+            foreach (Product item in salesperson.CurrentStock)
+	        {
+                city.SalesInfo.Add(new Product(item.Type, item.NumberOfUnits, 0));
+	        }
+
+            // add city object to salesperson
+            salesperson.CitiesVisited.Add(city);
 
             ConsoleUtil.DisplayMessage("Your account is setup");
-            //ConsoleUtil.DisplayMessage(numberOfUnits + " units of " + productType + " have been added to your inventory.");
 
             DisplayContinuePrompt();
 
@@ -841,6 +854,18 @@ namespace TheSalesTracker
             // Return char and concatenation substring.
             return char.ToUpper(s[0]) + s.Substring(1).ToLower();
         }
+
+        public void DisplayMissingAccountError()
+        {
+            ConsoleUtil.HeaderText = "ERROR";
+            ConsoleUtil.DisplayReset();
+
+            ConsoleUtil.DisplayMessage("No Account Info Found.");
+            ConsoleUtil.DisplayMessage("Please return to the menu to setup or load your Account.");
+
+            DisplayContinuePrompt();
+        }
+
 
  
         #endregion

@@ -17,11 +17,11 @@ namespace TheSalesTracker
                 LastName = "Woodbury",
                 AccountID = "123",
                 //CurrentStock = new Product(Product.ProductType.Benchpress, 25, false),
-                CitiesVisited = new List<City>()
-                {
-                    new City("Oslo", 25, 10),
-                    new City("Bergen", 50, 30),
-                }
+                //CitiesVisited = new List<City>()
+                //{
+                //    new City("Oslo", 25, 10),
+                //    new City("Bergen", 50, 30),
+                //}
                 
             };
             

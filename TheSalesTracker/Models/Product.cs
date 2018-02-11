@@ -27,7 +27,8 @@ namespace TheSalesTracker
         private int _numberOfUnits;
         private bool _onBackorder;
         private ProductType _type;
-
+        private int _productsBought;
+        private int _productsSold;
 
         #endregion
 
@@ -50,6 +51,18 @@ namespace TheSalesTracker
             set { _type = value; }
         }
 
+        public int ProductsBought
+        {
+            get { return _productsBought; }
+            set { _productsBought = value; }
+        }
+
+        public int ProductsSold
+        {
+            get { return _productsSold; }
+            set { _productsSold = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -65,6 +78,13 @@ namespace TheSalesTracker
             _type = type;
             _numberOfUnits = numberOfUnits;
             _onBackorder = onBackorder;
+        }
+
+        public Product(ProductType type, int productsBought, int productsSold)
+        {
+            _type = type;
+            _productsBought = productsBought;
+            _productsSold = productsSold;
         }
 
         #endregion
@@ -92,6 +112,11 @@ namespace TheSalesTracker
             }
 
             _numberOfUnits -= unitsToSubtract;
+        }
+
+        public void BuyProducts(int unitsToAdd)
+        {
+            _productsBought += unitsToAdd;
         }
 
         #endregion
