@@ -241,6 +241,7 @@ namespace TheSalesTracker
         /// </summary>
         public void BuyNewProducts()
         {
+            
             // instantiate a new product
             Product _product = new Product();
             _product.Type = _consoleView.DisplayBuyNewProducts(_salesperson);

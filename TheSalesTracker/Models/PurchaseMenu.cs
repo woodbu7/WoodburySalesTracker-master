@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TheSalesTracker
 {
+    // menu options for buying new or existing products
     public enum PurchaseMenu
     {
         BuyNew,

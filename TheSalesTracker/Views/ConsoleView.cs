@@ -104,17 +104,14 @@ namespace TheSalesTracker
             ConsoleUtil.DisplayMessage("You have traveled to the following cities:");
             ConsoleUtil.DisplayMessage("");
 
-            
             foreach (City city in salesperson.CitiesVisited)
             {
-                ConsoleUtil.DisplayMessage("City: " + city.CityName);
-
-                ConsoleUtil.DisplayMessage("Sales Info: ");
+                ConsoleUtil.DisplayMessage("City: " + city.CityName.ToUpper());
                 foreach (Product product in city.SalesInfo)
                 {
-                    ConsoleUtil.DisplayMessage("Product Type: " + product.Type.ToString());
-                    ConsoleUtil.DisplayMessage("Units Bought: " + product.ProductsBought.ToString());
-                    ConsoleUtil.DisplayMessage("Units Sold: " + product.ProductsSold.ToString());
+                    ConsoleUtil.DisplayMessage("\tProduct Type: " + product.Type.ToString());
+                    ConsoleUtil.DisplayMessage("\tUnits Bought: " + product.ProductsBought.ToString());
+                    ConsoleUtil.DisplayMessage("\tUnits Sold: " + product.ProductsSold.ToString());
                     ConsoleUtil.DisplayMessage("");
                 }
                 ConsoleUtil.DisplayMessage("");
@@ -131,7 +128,8 @@ namespace TheSalesTracker
         {
             ConsoleUtil.DisplayReset();
 
-            ConsoleUtil.DisplayMessage("Thank you for using The Traveling Salesperson Application.");
+            ConsoleUtil.DisplayMessage("Thank you for using The Sales Tracker Application.");
+            ConsoleUtil.DisplayMessage("If you saved your account information, you can load it next time you use the application.");
 
             DisplayContinuePrompt();
         }
@@ -146,7 +144,7 @@ namespace TheSalesTracker
             ConsoleUtil.HeaderText = "Load Account Information";
             ConsoleUtil.DisplayReset();
 
-            ConsoleUtil.DisplayMessage("Account information loaded.");
+            ConsoleUtil.DisplayMessage("Account information loaded sucessfully.");
 
             DisplayAccountDetail(salesperson);
 
@@ -154,14 +152,14 @@ namespace TheSalesTracker
         }
 
         /// <summary>
-        /// notifies user of a successful save of the account and travel log info
+        /// notifies the user of a successful save of the account and travel log info
         /// </summary>
         public void DisplayConfirmSaveAccountInfo()
         {
             ConsoleUtil.HeaderText = "Save Account Information";
             ConsoleUtil.DisplayReset();
 
-            ConsoleUtil.DisplayMessage("Account information saved.");
+            ConsoleUtil.DisplayMessage("Account information saved successfully.");
 
             DisplayContinuePrompt();
         }
@@ -181,23 +179,6 @@ namespace TheSalesTracker
             ConsoleUtil.DisplayMessage("");
 
             Console.CursorVisible = true;
-        }
-
-        /// <summary>
-        /// display the Exit prompt on a clean screen
-        /// </summary>
-        public void DisplayExitPrompt()
-        {
-            ConsoleUtil.DisplayReset();
-
-            Console.CursorVisible = false;
-
-            ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayMessage("Thank you for using the application. Press any key to Exit.");
-
-            Console.ReadKey();
-
-            System.Environment.Exit(1);
         }
 
         /// <summary>
@@ -230,6 +211,7 @@ namespace TheSalesTracker
 
             Product.ProductType productType = GetTypeOfProduct(salesperson, "buy", out bool inStock);
 
+            // if the product already exist in the inventory, the return will be set to none
             if (inStock)
             {
                 productType = Product.ProductType.None;
@@ -310,7 +292,6 @@ namespace TheSalesTracker
                 ConsoleUtil.DisplayMessage("The number of units to buy will be set to it's default value of 0.");
 
                 numberOfUnitsToBuy = 0;
-                DisplayContinuePrompt();
 
             }
 
@@ -337,9 +318,6 @@ namespace TheSalesTracker
                 DisplayContinuePrompt();
                 
             }
-
-            //ConsoleUtil.DisplayReset();
-            //ConsoleUtil.DisplayMessage(numberOfUnitsToSell + " products of " + product.Type.ToString() + " have been subtracted from the inventory.");
 
             DisplayContinuePrompt();
 
@@ -478,13 +456,8 @@ namespace TheSalesTracker
                     default:
                         ConsoleUtil.DisplayMessage(
                             "It appears you have selected an incorrect choice." + Environment.NewLine +
-                            "Press any key to continue or the ESC key to quit the application.");
-
-                        userResponse = Console.ReadKey(true);
-                        if (userResponse.Key == ConsoleKey.Escape)
-                        {
-                            usingMenu = false;
-                        }
+                            "Press any key to continue.");
+                        Console.ReadKey();
                         break;
                 }
             }
@@ -516,9 +489,13 @@ namespace TheSalesTracker
         {
             foreach (Product item in salesperson.CurrentStock)
             {
-                ConsoleUtil.DisplayMessage("Product type: " + item.Type.ToString());
-                ConsoleUtil.DisplayMessage("Number of units: " + item.NumberOfUnits.ToString());
-                ConsoleUtil.DisplayMessage("");
+                if (item.Type != Product.ProductType.None)
+                {
+                    ConsoleUtil.DisplayMessage("Product type: " + item.Type.ToString());
+                    ConsoleUtil.DisplayMessage("Number of units: " + item.NumberOfUnits.ToString());
+                    ConsoleUtil.DisplayMessage("");
+                }
+                
             }
         }
 
@@ -576,8 +553,7 @@ namespace TheSalesTracker
             else
             {
                 // note use of ternary operator (takes three arguments)
-                //return userResponse == "YES" ? true : false;
-                return true;
+                return userResponse == "YES" ? true : false;
             }
         }
 
@@ -609,8 +585,7 @@ namespace TheSalesTracker
             else
             {
                 // note use of ternary operator (takes three arguments)
-                //return userResponse == "YES" ? true : false;
-                return true;
+                return userResponse == "YES" ? true : false;
             }
         }
 
@@ -663,7 +638,7 @@ namespace TheSalesTracker
             {
                 // sets type of current stock to "none" product type
                 ConsoleUtil.DisplayMessage("It appears you are having difficulty selecting a product.");
-                ConsoleUtil.DisplayMessage("By default, your inventory will be set to none.");
+                ConsoleUtil.DisplayMessage("By default, no items will be added.");
 
                 productType = Product.ProductType.None;
 
@@ -693,7 +668,8 @@ namespace TheSalesTracker
             {
                 productType = GetTypeOfProduct(salesperson, "add",  out bool notInStock);
 
-                if (!notInStock)
+                // checks to see if product already exist in inventory or is set to type none
+                if (!notInStock && productType != Product.ProductType.None)
                 {
                     // get number of products
                     if (ConsoleValidator.TryGetIntegerFromUser(MINIMUM_BUYSELL_AMOUNT, MAXIMUM_BUYSELL_AMOUNT, MAXIMUM_ATTEMPTS, productType.ToString(), out int numberOfUnits))
@@ -760,6 +736,11 @@ namespace TheSalesTracker
             return salesperson.CurrentStock;
         }
 
+        /// <summary>
+        /// method displays menu system that allow the user to update account info of their choosing
+        /// </summary>
+        /// <param name="salesperson"></param>
+        /// <returns></returns>
         public Salesperson DisplayUpdateAccount(Salesperson salesperson)
         {
             bool usingMenu = true;
@@ -767,33 +748,42 @@ namespace TheSalesTracker
             ConsoleUtil.HeaderText = "Update Account";
             ConsoleUtil.DisplayReset();
 
-            // display account details to user
-            DisplayAccountDetail(salesperson);
+            while (usingMenu)
+            {
+                // display account details to user
+                DisplayAccountDetail(salesperson);
 
-            ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayMessage("Type the number for which infor you wish to update: ");
-            ConsoleUtil.DisplayMessage("");
-            Console.Write(
-                "\t" + "1. First Name" + Environment.NewLine +
-                "\t" + "2. Last Name" + Environment.NewLine +
-                "\t" + "3. Account ID" + Environment.NewLine +
-                "\t" + "E. Main Menu" + Environment.NewLine);
+                ConsoleUtil.DisplayMessage("");
+                ConsoleUtil.DisplayMessage("Type the number for which info you wish to update: ");
+                ConsoleUtil.DisplayMessage("");
+                Console.Write(
+                    "\t" + "1. First Name" + Environment.NewLine +
+                    "\t" + "2. Last Name" + Environment.NewLine +
+                    "\t" + "3. Account ID" + Environment.NewLine +
+                    "\t" + "E. Main Menu" + Environment.NewLine);
 
-            while(usingMenu)
-            { 
                 //
                 // get and process the user's response
                 ConsoleKeyInfo userResponse = Console.ReadKey(true);
                 switch (userResponse.KeyChar)
                 {
                     case '1':
-                        salesperson = DisplayUpdateFName(salesperson);
+                        ConsoleUtil.DisplayReset();
+                        ConsoleUtil.DisplayMessage("");
+                        ConsoleUtil.DisplayPromptMessage("Update your first name:");
+                        salesperson.FirstName = Console.ReadLine();
                         break;
                     case '2':
-                        salesperson = DisplayUpdateLName(salesperson);
+                        ConsoleUtil.DisplayReset();
+                        ConsoleUtil.DisplayMessage("");
+                        ConsoleUtil.DisplayPromptMessage("Update your last name:");
+                        salesperson.LastName = Console.ReadLine();
                         break;
                     case '3':
-                        salesperson = DisplayUpdateID(salesperson);
+                        ConsoleUtil.DisplayReset();
+                        ConsoleUtil.DisplayMessage("");
+                        ConsoleUtil.DisplayPromptMessage("Update your first name:");
+                        salesperson.AccountID = Console.ReadLine();
                         break;
                     case 'E':
                     case 'e':
@@ -814,66 +804,14 @@ namespace TheSalesTracker
         }
 
         /// <summary>
-        /// Display update first name
-        /// </summary>
-        /// <param name="salesperson"></param>
-        /// <returns></returns>
-        public Salesperson DisplayUpdateFName(Salesperson salesperson)
-        {
-            ConsoleUtil.DisplayReset();
-
-            ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayPromptMessage("Update your first name:");
-            salesperson.FirstName = Console.ReadLine();
-            ConsoleUtil.DisplayMessage("");
-
-            DisplayUpdateAccount(salesperson);
-            return salesperson;
-        }
-
-        /// <summary>
-        /// Display update last name
-        /// </summary>
-        /// <param name="salesperson"></param>
-        /// <returns></returns>
-        public Salesperson DisplayUpdateLName(Salesperson salesperson)
-        {
-            ConsoleUtil.DisplayReset();
-
-            ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayPromptMessage("Update your last name:");
-            salesperson.LastName = Console.ReadLine();
-            ConsoleUtil.DisplayMessage("");
-
-            DisplayUpdateAccount(salesperson);
-            return salesperson;
-        }
-
-        /// <summary>
-        /// Display update account ID
-        /// </summary>
-        /// <param name="salesperson"></param>
-        /// <returns></returns>
-        public Salesperson DisplayUpdateID(Salesperson salesperson)
-        {
-            ConsoleUtil.DisplayReset();
-
-            ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayPromptMessage("Update your first name:");
-            salesperson.AccountID = Console.ReadLine();
-            ConsoleUtil.DisplayMessage("");
-
-            DisplayUpdateAccount(salesperson);
-            return salesperson;
-        }
-
-        /// <summary>
         /// setup the new salesperson object with the initial data
         /// </summary>
         public Salesperson DisplaySetupAccount(out City city)
         {
-           
+           // instantiate a new salesperson object
             Salesperson salesperson = new Salesperson();
+
+            // instantiayte a new city object 
             city = new City();
             city.SalesInfo = new List<Product>();
 
@@ -886,7 +824,6 @@ namespace TheSalesTracker
             ConsoleUtil.DisplayPromptMessage("Enter your first name: ");
             salesperson.FirstName = Console.ReadLine();
             ConsoleUtil.DisplayMessage("");
-
 
             ConsoleUtil.DisplayPromptMessage("Enter your last name: ");
             salesperson.LastName = Console.ReadLine();
@@ -919,9 +856,7 @@ namespace TheSalesTracker
             // display account details to user
             DisplayAccountDetail(salesperson);
             ConsoleUtil.DisplayMessage("Starting city: " + city.CityName);
-            ConsoleUtil.DisplayMessage("");
             ConsoleUtil.DisplayMessage("Your current inventory:");
-            ConsoleUtil.DisplayMessage("");
             CurrentInventory(salesperson);
 
             DisplayContinuePrompt();
@@ -971,6 +906,9 @@ namespace TheSalesTracker
             return char.ToUpper(s[0]) + s.Substring(1).ToLower();
         }
 
+        /// <summary>
+        /// display account error if there are no account setup or loadded
+        /// </summary>
         public void DisplayMissingAccountError()
         {
             ConsoleUtil.HeaderText = "ERROR";
@@ -982,8 +920,6 @@ namespace TheSalesTracker
             DisplayContinuePrompt();
         }
 
-
- 
         #endregion
     }
 }
