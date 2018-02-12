@@ -99,6 +99,7 @@ namespace TheSalesTracker
         /// </summary>
         public void DisplayCitiesTraveled(Salesperson salesperson)
         {
+            ConsoleUtil.HeaderText = "Travel Log";
             ConsoleUtil.DisplayReset();
 
             ConsoleUtil.DisplayMessage("You have traveled to the following cities:");
@@ -332,6 +333,7 @@ namespace TheSalesTracker
         {
             int purchaseChoice;
 
+            ConsoleUtil.HeaderText = "Buy Products";
             ConsoleUtil.DisplayReset();
             Console.CursorVisible = false;
 
@@ -383,6 +385,7 @@ namespace TheSalesTracker
             while (usingMenu)
             {
                 // set up display area
+                ConsoleUtil.HeaderText = "The Sales Tracker";
                 ConsoleUtil.DisplayReset();
                 Console.CursorVisible = false;
 
@@ -686,6 +689,12 @@ namespace TheSalesTracker
                             // exit the while loop
                             keepAdding = false;
                         }
+                        else
+                        {
+                            //display available products to user
+                            DisplayAvailableProducts();
+                            ConsoleUtil.DisplayMessage("");
+                        }
 
                     }
                     else
@@ -705,6 +714,12 @@ namespace TheSalesTracker
                             keepAdding = false;
 
                         }
+                        else
+                        {
+                            //display available products to user
+                            DisplayAvailableProducts();
+                            ConsoleUtil.DisplayMessage("");
+                        }
                     }
                 }
                 else
@@ -719,6 +734,12 @@ namespace TheSalesTracker
                         // exit the while loop
                         keepAdding = false;
 
+                    }
+                    else
+                    {
+                        //display available products to user
+                        DisplayAvailableProducts();
+                        ConsoleUtil.DisplayMessage("");
                     }
                 }
 
@@ -772,18 +793,21 @@ namespace TheSalesTracker
                         ConsoleUtil.DisplayMessage("");
                         ConsoleUtil.DisplayPromptMessage("Update your first name:");
                         salesperson.FirstName = Console.ReadLine();
+                        ConsoleUtil.DisplayReset();
                         break;
                     case '2':
                         ConsoleUtil.DisplayReset();
                         ConsoleUtil.DisplayMessage("");
                         ConsoleUtil.DisplayPromptMessage("Update your last name:");
                         salesperson.LastName = Console.ReadLine();
+                        ConsoleUtil.DisplayReset();
                         break;
                     case '3':
                         ConsoleUtil.DisplayReset();
                         ConsoleUtil.DisplayMessage("");
-                        ConsoleUtil.DisplayPromptMessage("Update your first name:");
+                        ConsoleUtil.DisplayPromptMessage("Update your account ID name:");
                         salesperson.AccountID = Console.ReadLine();
+                        ConsoleUtil.DisplayReset();
                         break;
                     case 'E':
                     case 'e':
@@ -839,6 +863,7 @@ namespace TheSalesTracker
             // get products from user
             DisplayAvailableProducts();
             ConsoleUtil.DisplayMessage("");
+
             salesperson.CurrentStock = DisplayGetProducts(salesperson);
 
 
@@ -857,6 +882,7 @@ namespace TheSalesTracker
             DisplayAccountDetail(salesperson);
             ConsoleUtil.DisplayMessage("Starting city: " + city.CityName);
             ConsoleUtil.DisplayMessage("Your current inventory:");
+            ConsoleUtil.DisplayMessage("");
             CurrentInventory(salesperson);
 
             DisplayContinuePrompt();
